@@ -87,6 +87,11 @@ export const DOCUMENT_TYPE_NAMES: Record<DocumentType, string> = {
   sociedades: "Constitución de Sociedades"
 };
 
+// Precios por folio, copia simple y copia autorizada
+export const FOLIO_PRICE = 3.00;
+export const SIMPLE_COPY_PRICE = 3.50;
+export const AUTHORIZED_COPY_PRICE = 6.00;
+
 export function calculateNotaryFee(documentType: DocumentType, amount: number): number {
   // Si el monto es 0 o negativo, devolver 0
   if (amount <= 0) {
@@ -125,12 +130,26 @@ export function calculateNotaryFee(documentType: DocumentType, amount: number): 
   return Math.round(result * 100) / 100;
 }
 
-export function calculateIVA(notaryFee: number): number {
-  // IVA del 21%
-  return Math.round(notaryFee * 0.21 * 100) / 100;
+export function calculateFoliosCost(folios: number): number {
+  return folios * FOLIO_PRICE;
 }
 
-export function calculateTotal(notaryFee: number): number {
-  const iva = calculateIVA(notaryFee);
-  return Math.round((notaryFee + iva) * 100) / 100;
+export function calculateSimpleCopiesCost(copies: number): number {
+  return copies * SIMPLE_COPY_PRICE;
 }
+
+export function calculateAuthorizedCopiesCost(copies: number): number {
+  return copies * AUTHORIZED_COPY_PRICE;
+}
+
+export function calculateIVA(amount: number): number {
+  // IVA del 21%
+  return Math.round(amount * 0.21 * 100) / 100;
+}
+
+export function calculateTotal(notaryFee: number, foliosCost: number, simpleCopiesCost: number, authorizedCopiesCost: number): number {
+  const subtotal = notaryFee + foliosCost + simpleCopiesCost + authorizedCopiesCost;
+  const iva = calculateIVA(subtotal);
+  return Math.round((subtotal + iva) * 100) / 100;
+}
+
